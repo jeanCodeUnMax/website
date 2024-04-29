@@ -1,36 +1,27 @@
-import { ReactElement } from "react";
-import { Header } from "./lib/header";
-import { Projects } from "./lib/projects";
-import { Birthday } from "@/lib/components/birthday";
-import { Blog } from "./lib/blog";
-import { SpotifyCard } from "@/lib/components/spotify";
-import { DiscordPresence } from "@/lib/components/lanyard";
-import { cn } from "@/lib/utils";
-import { WhiteBannerWordle } from "./wordle.alert";
+import { WordleDialog } from "@/app/dialogs/wordle.dialog";
+import Image from "next/image";
+import { WordleParty } from "./party";
 
-const Home = (): ReactElement => {
+const Wordle = () => {
   return (
     <>
-      <WhiteBannerWordle />
-      <Header />
-      <Birthday />
+      <WordleDialog />
 
-      <div className="justify-center mx-auto w-5/6 lg:w-2/4 mt-3">
-        <div className={cn("grid gap-3 md:grid-cols-2 mb-3")}>
-          <SpotifyCard />
-          <DiscordPresence />
-        </div>
+      <div className="justify-center mx-auto w-full px-4 sm:px-0 sm:w-5/6 lg:w-3/6 mt-5 sm:mt-10 md:mt-20">
+        <Image
+          src="/_static/images/wordle_title.png"
+          alt="Wordle"
+          width={400}
+          height={69.27}
+          className="justify-center mx-auto"
+        />
 
-        <Projects />
-
-        <Blog />
-
-        <div className="mt-7 mb-7">
-          <p className="text-white text-center">Made with ❤️ by Gaëtan</p>
+        <div className="mt-5">
+          <WordleParty />
         </div>
       </div>
     </>
   );
-}
+};
 
-export default Home;
+export default Wordle;

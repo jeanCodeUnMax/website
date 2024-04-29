@@ -127,6 +127,7 @@ export const WordleBoard = (): ReactElement => {
               <div className="flex flex-row gap-2">
                 <div className="w-5 h-5 bg-[#262626] mt-1"></div>
                 <p>Letter not found</p>
+                <p>{party?.word}</p>
               </div>
 
               <p className="text-muted-foreground text-sm flex flex-row gap-2 items-center">

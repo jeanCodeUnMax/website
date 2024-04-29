@@ -1,13 +1,36 @@
 "use client";
 
-import { Button } from "../../../lib/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../../../lib/components/ui/dialog";
+import { Button } from "../../lib/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../lib/components/ui/dialog";
 import { useState, type PropsWithChildren } from "react";
 import { Component } from "@/lib/components/utils/component";
 import { Label } from "@/lib/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/lib/components/ui/select";
-import { Categories, PartyDifficulty, WordCategories, WordleParty } from "@/lib/types/wordle.type";
-import { difficultyToNumber, getCategoryId, getCategoryName } from "@/lib/wordle/party";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/lib/components/ui/select";
+import {
+  Categories,
+  PartyDifficulty,
+  WordCategories,
+  WordleParty,
+} from "@/lib/types/wordle.type";
+import {
+  difficultyToNumber,
+  getCategoryId,
+  getCategoryName,
+} from "@/lib/wordle/party";
 import { useWorldePartyStore } from "@/lib/store/wordle.store";
 import { Loader2 } from "lucide-react";
 import { z } from "zod";
@@ -16,7 +39,9 @@ import { Slider } from "@/lib/components/ui/slider";
 import { Switch } from "@/lib/components/ui/switch";
 import { Alert, AlertDescription, AlertTitle } from "@/lib/components/ui/alert";
 
-export const NewWordlePartyDialog: Component<PropsWithChildren> = ({ children }) => {
+export const NewWordlePartyDialog: Component<PropsWithChildren> = ({
+  children,
+}) => {
   const [category, setCategory] = useState<WordCategories>("random");
   const [difficulty, setDifficulty] = useState<PartyDifficulty>("five");
   const [attempts, setAttempts] = useState<5 | 6 | 7 | 8 | 9 | 10>(5);
@@ -30,24 +55,35 @@ export const NewWordlePartyDialog: Component<PropsWithChildren> = ({ children })
 
   const getWord = async () => {
     setLoading(true);
-    const cat =  category == "random"
-      ? Object.keys(Categories)[Math.floor(Math.random() * Object.keys(Categories).length)] as WordCategories
-      : category;
+    const cat =
+      category == "random"
+        ? (Object.keys(Categories)[
+            Math.floor(Math.random() * Object.keys(Categories).length)
+          ] as WordCategories)
+        : category;
 
-    const response = await fetch(`https://trouve-mot.fr/api/categorie/${getCategoryId(cat)}/50`);
+    const response = await fetch(
+      `https://trouve-mot.fr/api/categorie/${getCategoryId(cat)}/50`
+    );
     const data = await response.json();
 
-    const schema = z.array(z.object({
-      name: z.string(),
-      categorie: z.string()
-    })).safeParse(data);
+    const schema = z
+      .array(
+        z.object({
+          name: z.string(),
+          categorie: z.string(),
+        })
+      )
+      .safeParse(data);
 
     if (!schema.success) {
       return;
     }
 
     const words = schema.data;
-    const word = words.find((word) => word.name.length === difficultyToNumber(difficulty));
+    const word = words.find(
+      (word) => word.name.length === difficultyToNumber(difficulty)
+    );
 
     if (!word) {
       setError(true);
@@ -59,24 +95,26 @@ export const NewWordlePartyDialog: Component<PropsWithChildren> = ({ children })
       id: Math.random().toString(36).substring(7),
       category: cat,
       difficulty,
-      word: word.name.replace(/é/g, "e").replace(/è/g, "e").replace(/à/g, "a").replace(/ç/g, "c"),
+      word: word.name
+        .replace(/é/g, "e")
+        .replace(/è/g, "e")
+        .replace(/à/g, "a")
+        .replace(/ç/g, "c"),
       startedAt: dayJS().toISOString(),
       attempts,
       jokerUsed: !joker,
-      activeLineIndex: 0
+      activeLineIndex: 0,
     };
-    
+
     setActiveLineIndex(0);
     addParty(party);
     setLoading(false);
-  }
+  };
 
   return (
     <Dialog>
-      <DialogTrigger>
-        {children}
-      </DialogTrigger>
-      
+      <DialogTrigger>{children}</DialogTrigger>
+
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Start a new Wordle party</DialogTitle>
@@ -88,11 +126,14 @@ export const NewWordlePartyDialog: Component<PropsWithChildren> = ({ children })
             <Alert className="flex items-center justify-between">
               <Label>Category:</Label>
 
-              <Select defaultValue="random" onValueChange={(value) => {
-                console.log(value, category);
-                setCategory(value as WordCategories);
-                console.log(category);
-              }}>
+              <Select
+                defaultValue="random"
+                onValueChange={(value) => {
+                  console.log(value, category);
+                  setCategory(value as WordCategories);
+                  console.log(category);
+                }}
+              >
                 <SelectTrigger className="w-[60%]">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
@@ -110,7 +151,12 @@ export const NewWordlePartyDialog: Component<PropsWithChildren> = ({ children })
           <div className="flex flex-col space-y-2">
             <Alert className="flex items-center justify-between">
               <Label>Choose the difficulty:</Label>
-              <Select defaultValue="five" onValueChange={(value) => setDifficulty(value as PartyDifficulty)}>
+              <Select
+                defaultValue="five"
+                onValueChange={(value) =>
+                  setDifficulty(value as PartyDifficulty)
+                }
+              >
                 <SelectTrigger className="w-[60%]">
                   <SelectValue placeholder="Select a difficulty" />
                 </SelectTrigger>
@@ -128,14 +174,18 @@ export const NewWordlePartyDialog: Component<PropsWithChildren> = ({ children })
 
           <div>
             <Alert className="flex flex-col space-y-3">
-              <Label>Choose the number of attempts (Selected: {attempts}):</Label>
+              <Label>
+                Choose the number of attempts (Selected: {attempts}):
+              </Label>
               <Slider
                 defaultValue={[5]}
                 max={10}
                 min={5}
                 step={1}
                 className="w-full"
-                onValueChange={(value) => setAttempts(value[0] as 5 | 6 | 7 | 8 | 9 | 10)}
+                onValueChange={(value) =>
+                  setAttempts(value[0] as 5 | 6 | 7 | 8 | 9 | 10)
+                }
               />
             </Alert>
           </div>
@@ -145,7 +195,8 @@ export const NewWordlePartyDialog: Component<PropsWithChildren> = ({ children })
               <div>
                 <Label htmlFor="joker-switch">Enable Joker:</Label>
                 <p className="text-muted-foreground mr-2">
-                  The Joker allows you to reveal a good placed letter in the word, but you can only use it once.
+                  The Joker allows you to reveal a good placed letter in the
+                  word, but you can only use it once.
                 </p>
               </div>
               <Switch
@@ -160,7 +211,8 @@ export const NewWordlePartyDialog: Component<PropsWithChildren> = ({ children })
             <Alert variant={"destructive"}>
               <AlertTitle>Oops! An error occurred</AlertTitle>
               <AlertDescription>
-                We couldn&apos;t find a word with the selected parameters. Please try again.
+                We couldn&apos;t find a word with the selected parameters.
+                Please try again.
               </AlertDescription>
             </Alert>
           )}
@@ -174,7 +226,11 @@ export const NewWordlePartyDialog: Component<PropsWithChildren> = ({ children })
             }}
             disabled={loading}
           >
-            {loading && <><Loader2 className="w-4 h-4 animate-spin" /> &nbsp;</>}
+            {loading && (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" /> &nbsp;
+              </>
+            )}
             Start party
           </Button>
         </DialogFooter>
